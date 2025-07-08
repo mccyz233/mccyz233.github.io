@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID共享平台</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-share-alt"></i>
+                <h1>ID共享平台</h1>
+            </div>
+        </header>
+        
+        <!-- 安全提示区域 -->
+        <div class="security-notice">
+            <!-- <div class="notice-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div> -->
+            <div class="notice-content">
+                <h3>账户共享安全提示</h3>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> 美区共享ID账号随时会失效</li>
+                    <li><i class="fas fa-check-circle"></i> 如果失效请过几小时后再来查看</li>
+                    <li><i class="fas fa-check-circle"></i> 请不要将共享账号登陆到手机设置或iCloud里！否则会被锁机变砖！</li>
+                </ul>
+            </div>
+        </div>
+        
+        <section class="account-list">
+            <div class="section-header">
+                <h2>共享账户列表</h2>
+            </div>
+
+            <!-- 账户列表容器 - 将通过API动态填充 -->
+            <div class="accounts-container">
+                <div class="accounts-grid">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>加载账户中...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
