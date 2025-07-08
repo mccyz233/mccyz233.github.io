@@ -14,7 +14,6 @@ async function fetchAccountData(retryCount = 0) {
     if (accountsGrid) {
         accountsGrid.innerHTML = `
             <div class="loading">
-                <i class="fas fa-spinner fa-spin"></i>
                 <span>加载账户中...</span>
             </div>
         `;
@@ -43,7 +42,6 @@ async function fetchAccountData(retryCount = 0) {
             if (retryCount < 3) {
                 accountsGrid.innerHTML = `
                     <div class="loading">
-                        <i class="fas fa-exclamation-triangle"></i>
                         <span>加载失败，正在重试 (${retryCount + 1}/3)...</span>
                     </div>
                 `;
@@ -56,7 +54,6 @@ async function fetchAccountData(retryCount = 0) {
                 // 超过重试次数，显示最终错误
                 accountsGrid.innerHTML = `
                     <div class="loading error">
-                        <i class="fas fa-times-circle"></i>
                         <span>账户数据加载失败，请稍后刷新页面重试</span>
                         <button class="btn retry-btn" onclick="fetchAccountData()">重新加载</button>
                     </div>
@@ -78,18 +75,6 @@ function renderAccounts(accounts) {
     accounts.forEach((account, index) => {
         const accountCard = document.createElement('div');
         accountCard.className = 'account-card';
-        
-        // 根据邮箱类型决定显示的标题
-        let title = "共享账户";
-        if (account.account.includes('@gmail.com')) {
-            title = "Gmail账户";
-        } else if (account.account.includes('@outlook.com')) {
-            title = "Outlook账户";
-        } else if (account.account.includes('@163.com')) {
-            title = "网易邮箱";
-        } else if (account.account.includes('@hotmail.com')) {
-            title = "Hotmail账户";
-        }
         
         // 解码状态 - 处理Unicode编码的中文
         let decodedStatus = "正常";
@@ -113,7 +98,6 @@ function renderAccounts(accounts) {
         const maskedAccount = maskAccount(account.account);
         
         accountCard.innerHTML = `
-            <h3>${title}</h3>
             <div class="credentials">
                 <div class="credential-row">
                     <span class="label">账户:</span>
@@ -125,8 +109,8 @@ function renderAccounts(accounts) {
                 <span class="update-time">${updateTime}更新</span>
             </div>
             <div class="copy-actions">
-                <button class="copy-btn" data-copy="account-${index + 1}" data-real="${account.account}">复制账户 <i class="fas fa-copy"></i></button>
-                <button class="copy-btn password-btn" data-real="${account.password}">复制密码 <i class="fas fa-key"></i></button>
+                <button class="copy-btn" data-copy="account-${index + 1}" data-real="${account.account}">复制账户</button>
+                <button class="copy-btn password-btn" data-real="${account.password}">复制密码</button>
             </div>
         `;
         
@@ -203,7 +187,7 @@ function handleCopyClick() {
         
         // 显示复制成功反馈
         const originalText = this.innerHTML;
-        this.innerHTML = '复制成功 <i class="fas fa-check"></i>';
+        this.innerHTML = '复制成功';
         this.classList.add('copied');
         
         // 2秒后恢复原始文本
