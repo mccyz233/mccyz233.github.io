@@ -14,6 +14,7 @@
     --status-warning: #ff9500;
     --status-error: #ff3b30;
     --warning-color: #ff3b30;
+    --redirect-color: #ff6b6b; /* 新增: 浅红色变量 */
 }
 
 * {
@@ -589,16 +590,16 @@ footer {
 
 /* 备用链接样式 */
 .notice-item.redirect-link {
-    border-left-color: #34c759; /* 使用绿色 */
+    border-left-color: var(--redirect-color); /* 使用浅红色 */
 }
 
 .notice-item.redirect-link i {
-    color: #34c759; /* 使用绿色 */
+    color: var(--redirect-color); /* 使用浅红色 */
     animation: pulse 2s infinite;
 }
 
 .notice-item.redirect-link a {
-    color: #34c759; /* 使用绿色 */
+    color: var(--redirect-color); /* 使用浅红色 */
     font-weight: bold;
     text-decoration: none;
     transition: var(--transition);
@@ -606,7 +607,7 @@ footer {
 
 .notice-item.redirect-link a:hover {
     text-decoration: underline;
-    color: #2ba147; /* 深一点的绿色用于悬停效果 */
+    color: #e05555; /* 深一点的红色用于悬停效果 */
 }
 
 @keyframes pulse {
