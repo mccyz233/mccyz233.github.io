@@ -14,13 +14,34 @@ async function fetchAccountData(retryCount = 0) {
     if (accountsGrid) {
         accountsGrid.innerHTML = `
             <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
                 <span>加载账户中...</span>
             </div>
         `;
     }
     
     try {
-        const response = await fetch('https://a.c98.eu/api/appids.json');
+        const getApiPath = () => {
+            // 分成多个片段
+            const p1 = 'aHR0c';
+            const p2 = 'HM6Ly9h';
+            const p3 = 'LmM5OC5';
+            const p4 = 'ldS9hcGk';
+            const p5 = 'vYXBwaW';
+            const p6 = 'RzLmpzb24=';
+            
+            let parts = [p3, p1, p6, p2, p5, p4];
+            parts = [parts[1], parts[3], parts[0], parts[5], parts[4], parts[2]];
+            
+            try {
+                return atob(parts.join(''));
+            } catch (e) {
+                return 'data:text/plain,{"error":"API_ERROR"}';
+            }
+        };
+        
+        const apiPath = getApiPath();
+        const response = await fetch(apiPath);
         
         if (!response.ok) {
             throw new Error(`API请求失败: ${response.status}`);
@@ -42,6 +63,7 @@ async function fetchAccountData(retryCount = 0) {
             if (retryCount < 3) {
                 accountsGrid.innerHTML = `
                     <div class="loading">
+                        <i class="fas fa-exclamation-triangle"></i>
                         <span>加载失败，正在重试 (${retryCount + 1}/3)...</span>
                     </div>
                 `;
@@ -54,6 +76,7 @@ async function fetchAccountData(retryCount = 0) {
                 // 超过重试次数，显示最终错误
                 accountsGrid.innerHTML = `
                     <div class="loading error">
+                        <i class="fas fa-times-circle"></i>
                         <span>账户数据加载失败，请稍后刷新页面重试</span>
                         <button class="btn retry-btn" onclick="fetchAccountData()">重新加载</button>
                     </div>
@@ -109,8 +132,8 @@ function renderAccounts(accounts) {
                 <span class="update-time">${updateTime}更新</span>
             </div>
             <div class="copy-actions">
-                <button class="copy-btn" data-copy="account-${index + 1}" data-real="${account.account}">复制账户</button>
-                <button class="copy-btn password-btn" data-real="${account.password}">复制密码</button>
+                <button class="copy-btn" data-copy="account-${index + 1}" data-real="${account.account}">复制账户 <i class="fas fa-copy"></i></button>
+                <button class="copy-btn password-btn" data-real="${account.password}">复制密码 <i class="fas fa-key"></i></button>
             </div>
         `;
         
@@ -138,14 +161,31 @@ function maskAccount(account) {
     return prefix + maskedPart + suffix;
 }
 
-// 格式化日期
+// 格式化日期为"几分钟前"格式
 function formatDate(dateString) {
     try {
         const date = new Date(dateString);
+        const now = new Date();
+        
         if (isNaN(date.getTime())) {
             return dateString.split(' ')[0]; // 如果解析失败，至少返回日期部分
         }
-        return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        
+        const diffMs = now - date;
+        const diffMins = Math.round(diffMs / (1000 * 60));
+        const diffHours = Math.round(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+        
+        // 根据时间差显示不同的格式
+        if (diffMins < 1) {
+            return '刚刚';
+        } else if (diffMins < 60) {
+            return `${diffMins}分钟前`;
+        } else if (diffHours < 24) {
+            return `${diffHours}小时前`;
+        } else {
+            return `${diffDays}天前`;
+        }
     } catch (error) {
         console.error('日期格式化失败:', error);
         return dateString;
@@ -185,15 +225,46 @@ function handleCopyClick() {
         // 移除临时元素
         document.body.removeChild(textarea);
         
-        // 显示复制成功反馈
-        const originalText = this.innerHTML;
-        this.innerHTML = '复制成功';
-        this.classList.add('copied');
-        
-        // 2秒后恢复原始文本
-        setTimeout(() => {
-            this.innerHTML = originalText;
-            this.classList.remove('copied');
-        }, 2000);
+        // 创建弹窗
+        showCopyModal(this.innerHTML.includes('账户') ? '账户' : '密码');
     }
+}
+
+// 显示复制成功弹窗
+function showCopyModal(type) {
+    // 检查是否已存在modal，如果存在则移除
+    const existingModal = document.querySelector('.copy-modal');
+    if (existingModal) {
+        document.body.removeChild(existingModal);
+    }
+    
+    // 创建modal元素
+    const modal = document.createElement('div');
+    modal.className = 'copy-modal';
+    
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-check-circle"></i> ${type}复制成功</h3>
+            </div>
+            <div class="modal-body">
+                <p>已成功复制到剪贴板</p>
+                <p class="warning-text"><i class="fas fa-exclamation-triangle"></i> 请不要将共享账号登陆到手机设置或iCloud里！否则会被锁机变砖！</p>
+            </div>
+            <div class="modal-footer">
+                <button class="close-modal-btn">确定</button>
+            </div>
+        </div>
+    `;
+    
+    // 添加到body
+    document.body.appendChild(modal);
+    
+    // 给确定按钮添加事件
+    const closeBtn = modal.querySelector('.close-modal-btn');
+    closeBtn.addEventListener('click', function() {
+        document.body.removeChild(modal);
+    });
+    
+    // 移除自动关闭功能
 } 

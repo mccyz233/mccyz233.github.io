@@ -1,0 +1,75 @@
+/*!
+ * Font Awesome Free 6.4.0 (minimal version)
+ * License - https://fontawesome.com/license/free
+ */
+ 
+@font-face {
+  font-family: 'Font Awesome 6 Free';
+  font-style: normal;
+  font-weight: 900;
+  src: url(webfonts/fa-solid-900.woff2) format('woff2');
+}
+
+.fas {
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  display: inline-block;
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+}
+
+/* Basic icon definitions */
+.fa-rocket:before {
+  content: "\f135";
+}
+.fa-info-circle:before {
+  content: "\f05a";
+}
+.fa-clock:before {
+  content: "\f017";
+}
+.fa-exclamation-triangle:before {
+  content: "\f071";
+}
+.fa-spinner:before {
+  content: "\f110";
+}
+.fa-copy:before {
+  content: "\f0c5";
+}
+.fa-key:before {
+  content: "\f084";
+}
+.fa-check-circle:before {
+  content: "\f058";
+}
+.fa-times-circle:before {
+  content: "\f057";
+}
+.fa-star:before {
+  content: "\f005";
+}
+.fa-link:before {
+  content: "\f0c1";
+}
+.fa-shopping-cart:before {
+  content: "\f07a";
+}
+
+/* Animation classes */
+.fa-spin {
+  animation: fa-spin 2s linear infinite;
+}
+
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
