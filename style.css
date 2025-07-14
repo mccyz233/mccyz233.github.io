@@ -89,16 +89,33 @@ header {
     display: flex;
     align-items: center;
     font-weight: bold;
+    flex-direction: column;
+}
+
+.title-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
 .logo i {
-    font-size: 24px;
+    font-size: 32px;
     color: var(--primary-color);
     margin-right: 10px;
+    animation: rocket 2s infinite;
+}
+
+.site-name {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 3px rgba(0, 122, 255, 0.2);
 }
 
 .logo h1 {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 600;
 }
 
@@ -188,6 +205,14 @@ header {
 @media (max-width: 480px) {
     .logo h1 {
         font-size: 18px;
+    }
+    
+    .site-name {
+        font-size: 26px;
+    }
+    
+    .title-row {
+        margin-bottom: 8px;
     }
     
     .mobile-menu-toggle {
@@ -320,7 +345,7 @@ header {
 
 /* 账户列表 */
 .account-list {
-    padding: 20px 0 60px;
+    /* padding: 20px 0 60px; */
 }
 
 .accounts-container {
@@ -842,9 +867,6 @@ footer {
 
 /* 图标动画效果 */
 .logo i {
-    font-size: 24px;
-    color: var(--primary-color);
-    margin-right: 10px;
     animation: rocket 2s infinite;
 }
 
@@ -893,4 +915,306 @@ footer {
     color: var(--warning-color);
     margin-right: 8px;
     animation: pulse 1.5s infinite;
+} 
+
+/* 登录流程指南样式 */
+.login-guide {
+    padding: 20px 0;
+    margin-bottom: 30px;
+}
+
+.guide-content {
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    box-shadow: var(--shadow);
+}
+
+.guide-step {
+    display: flex;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.guide-step:last-child {
+    margin-bottom: 0;
+}
+
+/* 移除步骤之间的连接线 */
+/* .guide-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: 40px;
+    bottom: -10px;
+    width: 2px;
+    background-color: var(--primary-color);
+    opacity: 0.3;
+} */
+
+.step-number {
+    background-color: var(--primary-color);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-right: 15px;
+    box-shadow: 0 2px 5px rgba(0, 122, 255, 0.3);
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content p {
+    margin-top: 0;
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.guide-image {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.guide-image figure {
+    margin: 0;
+}
+
+.guide-image img {
+    max-width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.guide-image img:hover {
+    transform: scale(1.02);
+}
+
+.guide-image figcaption {
+    margin-top: 10px;
+    color: var(--light-text);
+    font-size: 14px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .guide-step {
+        flex-direction: column;
+    }
+    
+    .step-number {
+        margin-bottom: 15px;
+    }
+    
+    /* 移除响应式中的连接线样式 */
+    /* .guide-step:not(:last-child)::after {
+        left: 20px;
+        top: 40px;
+        height: calc(100% - 30px);
+        width: 2px;
+    } */
+} 
+
+/* 问答验证模块样式 - 内嵌在账号列表中 */
+.verification-card {
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    animation: modalFadeIn 0.3s ease;
+    grid-column: 1 / -1; /* 占据整个账号列表宽度 */
+}
+
+.verification-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+    background-color: rgba(0, 122, 255, 0.05);
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    margin: -25px -25px 20px -25px;
+}
+
+.verification-header h3 {
+    font-size: 20px;
+    margin: 0 0 10px 0;
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.verification-header p {
+    margin: 0;
+    color: var(--light-text);
+    font-size: 14px;
+}
+
+.verification-body {
+    padding: 5px;
+}
+
+.question-container {
+    margin-bottom: 20px;
+}
+
+#questionText {
+    font-size: 18px;
+    margin-bottom: 20px;
+    text-align: center;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.options-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+    justify-content: center;
+}
+
+.option-btn {
+    flex: 1;
+    padding: 12px 15px;
+    border: none;
+    background-color: #f1f5f9;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    max-width: 180px;
+}
+
+.option-btn:hover {
+    background-color: #e2e8f0;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.option-btn.correct {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+.option-btn.incorrect {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.attempts-counter {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--light-text);
+}
+
+.attempts-counter p {
+    margin: 0;
+}
+
+#attemptsLeft {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+@media (max-width: 480px) {
+    .verification-card {
+        padding: 20px;
+    }
+    
+    .verification-header {
+        margin: -20px -20px 15px -20px;
+        padding: 12px;
+    }
+    
+    .options-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .option-btn {
+        width: 100%;
+        max-width: 100%;
+    }
+} 
+
+/* 重要提示醒目样式 */
+.important-notice {
+    background-color: rgba(255, 59, 48, 0.15);
+    border-left: 4px solid var(--warning-color);
+    padding: 12px 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 5px 0;
+}
+
+.important-notice i {
+    color: var(--warning-color);
+    font-size: 18px;
+    animation: pulse 1.5s infinite;
+    margin-top: 3px;
+}
+
+.important-notice span {
+    line-height: 1.6;
+}
+
+.important-notice strong {
+    color: var(--warning-color);
+    font-weight: bold;
+} 
+
+/* 免责声明 */
+.disclaimer {
+    background-color: #fff3cd;
+    border-left: 4px solid #ffc107;
+    color: #664d03;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.disclaimer i {
+    font-size: 18px;
+    margin-right: 10px;
+    color: #ffc107;
+    margin-top: 2px;
+}
+
+.disclaimer p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+    .disclaimer {
+        padding: 10px 12px;
+    }
+    
+    .disclaimer p {
+        font-size: 13px;
+    }
 } 

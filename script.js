@@ -1,17 +1,160 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // 获取API数据并渲染账户列表
-    fetchAccountData();
-    
-    // 复制功能 - 会在渲染账户列表后添加事件监听器
-    setupCopyButtons();
+    // 在账号列表区域中初始化验证系统
+    initVerificationSystem();
 });
+
+// 初始化验证系统
+function initVerificationSystem() {
+    // 问题库
+    const questions = [
+        {
+            question: "共享 ID 是否可以开启双重认证？",
+            options: ["可以", "不可以"],
+            correctAnswer: "不可以"
+        },
+        {
+            question: "共享ID的推荐用途是？",
+            options: ["应用下载", "手机定位"],
+            correctAnswer: "应用下载"
+        },
+        {
+            question: "共享 ID 怎么跳过开启双重认证？",
+            options: ["其他选项-不升级", "继续"],
+            correctAnswer: "其他选项-不升级"
+        }
+    ];
+    
+    let attemptsLeft = 2;
+    const accountsGrid = document.querySelector('.accounts-grid');
+    
+    // 在账号列表区域中显示验证界面
+    if (accountsGrid) {
+        accountsGrid.innerHTML = `
+            <div class="verification-card">
+                <div class="verification-header">
+                    <h3><i class="fas fa-shield-alt"></i> 安全验证</h3>
+                    <p>请回答下列问题以继续访问共享账户</p>
+                </div>
+                <div class="verification-body">
+                    <div class="question-container">
+                        <p id="questionText">问题加载中...</p>
+                        <div class="options-container">
+                            <button class="option-btn" id="optionLeft">选项A</button>
+                            <button class="option-btn" id="optionRight">选项B</button>
+                        </div>
+                    </div>
+                    <div class="attempts-counter">
+                        <p>剩余尝试次数: <span id="attemptsLeft">2</span></p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // 获取刚刚创建的元素
+    const questionText = document.getElementById('questionText');
+    const optionLeft = document.getElementById('optionLeft');
+    const optionRight = document.getElementById('optionRight');
+    const attemptsLeftSpan = document.getElementById('attemptsLeft');
+    
+    // 随机选择一个问题
+    const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+    
+    // 显示问题和选项
+    questionText.textContent = randomQuestion.question;
+    optionLeft.textContent = randomQuestion.options[0];
+    optionRight.textContent = randomQuestion.options[1];
+    attemptsLeftSpan.textContent = attemptsLeft;
+    
+    // 添加点击事件处理
+    optionLeft.addEventListener('click', function() {
+        handleAnswer(randomQuestion.options[0], randomQuestion.correctAnswer);
+    });
+    
+    optionRight.addEventListener('click', function() {
+        handleAnswer(randomQuestion.options[1], randomQuestion.correctAnswer);
+    });
+    
+    // 处理答案选择
+    function handleAnswer(selectedOption, correctAnswer) {
+        if (selectedOption === correctAnswer) {
+            // 答案正确
+            const clickedButton = selectedOption === randomQuestion.options[0] ? optionLeft : optionRight;
+            clickedButton.classList.add('correct');
+            
+            // 显示正确消息并延迟开始加载账号
+            setTimeout(function() {
+                // 显示加载状态
+                accountsGrid.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>验证通过，加载账户中...</span>
+                    </div>
+                `;
+                
+                // 开始加载账号数据
+                fetchAccountData();
+            }, 1000);
+        } else {
+            // 答案错误
+            attemptsLeft--;
+            attemptsLeftSpan.textContent = attemptsLeft;
+            
+            const clickedButton = selectedOption === randomQuestion.options[0] ? optionLeft : optionRight;
+            clickedButton.classList.add('incorrect');
+            
+            // 如果尝试次数用完
+            if (attemptsLeft <= 0) {
+                setTimeout(function() {
+                    alert('验证失败次数过多，请刷新页面重试。');
+                    // 禁用选项按钮
+                    optionLeft.disabled = true;
+                    optionRight.disabled = true;
+                    
+                    // 显示失败消息
+                    accountsGrid.innerHTML = `
+                        <div class="loading error">
+                            <i class="fas fa-times-circle"></i>
+                            <span>验证失败，请刷新页面重新尝试</span>
+                            <button class="btn retry-btn" onclick="location.reload()">刷新页面</button>
+                        </div>
+                    `;
+                }, 500);
+            } else {
+                // 还有尝试机会，1秒后重置
+                setTimeout(function() {
+                    // 重置按钮样式
+                    optionLeft.classList.remove('incorrect');
+                    optionRight.classList.remove('incorrect');
+                    
+                    // 重新随机选择一个问题
+                    const newRandomQuestion = questions[Math.floor(Math.random() * questions.length)];
+                    
+                    // 更新问题和选项
+                    questionText.textContent = newRandomQuestion.question;
+                    optionLeft.textContent = newRandomQuestion.options[0];
+                    optionRight.textContent = newRandomQuestion.options[1];
+                    
+                    // 更新事件处理器
+                    optionLeft.onclick = function() {
+                        handleAnswer(newRandomQuestion.options[0], newRandomQuestion.correctAnswer);
+                    };
+                    
+                    optionRight.onclick = function() {
+                        handleAnswer(newRandomQuestion.options[1], newRandomQuestion.correctAnswer);
+                    };
+                }, 1000);
+            }
+        }
+    }
+}
 
 // 从API获取账户数据
 async function fetchAccountData(retryCount = 0) {
     const accountsGrid = document.querySelector('.accounts-grid');
     
-    // 显示加载状态
-    if (accountsGrid) {
+    // 显示加载状态（如果尚未显示）
+    if (accountsGrid && !accountsGrid.querySelector('.loading')) {
         accountsGrid.innerHTML = `
             <div class="loading">
                 <i class="fas fa-spinner fa-spin"></i>
@@ -51,6 +194,9 @@ async function fetchAccountData(retryCount = 0) {
         
         if (data && data.ids && Array.isArray(data.ids)) {
             renderAccounts(data.ids);
+            
+            // 添加复制功能事件监听
+            setupCopyButtons();
         } else {
             throw new Error('API数据格式不正确');
         }
