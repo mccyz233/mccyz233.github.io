@@ -213,20 +213,77 @@ function handleCopyClick() {
     const realValue = this.getAttribute('data-real');
     
     if (realValue) {
-        // 创建临时文本区域
-        const textarea = document.createElement('textarea');
-        textarea.value = realValue;
-        document.body.appendChild(textarea);
+        // 使用现代 Clipboard API 进行复制，如果不支持则降级到传统方法
+        copyTextToClipboard(realValue, this);
+    }
+}
+
+// 复制文本到剪贴板的现代方法
+async function copyTextToClipboard(text, button) {
+    try {
+        // 尝试使用现代 Clipboard API
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            showCopyModal(button.innerHTML.includes('账户') ? '账户' : '密码');
+        } else {
+            // 降级方法，适用于不支持 Clipboard API 的浏览器或非安全上下文
+            fallbackCopyTextToClipboard(text, button);
+        }
+    } catch (err) {
+        console.error('复制失败:', err);
+        // 降级到传统方法
+        fallbackCopyTextToClipboard(text, button);
+    }
+}
+
+// 降级的复制方法，适用于不支持 Clipboard API 的浏览器
+function fallbackCopyTextToClipboard(text, button) {
+    // 创建临时文本区域，定位在屏幕之外
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    
+    // 移动设备优化：设置为可见但位于视图之外
+    textarea.style.position = 'fixed';
+    textarea.style.left = '999999px';
+    textarea.style.top = '0';
+    textarea.style.opacity = '0';
+    textarea.style.zIndex = '-1';
+    
+    document.body.appendChild(textarea);
+    
+    // 触摸设备处理
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        // 移动设备特殊处理
+        const range = document.createRange();
+        range.selectNodeContents(textarea);
         
-        // 选择文本并复制
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        
+        textarea.setSelectionRange(0, text.length);
+    } else {
+        // 桌面设备处理
         textarea.select();
-        document.execCommand('copy');
-        
-        // 移除临时元素
-        document.body.removeChild(textarea);
-        
-        // 创建弹窗
-        showCopyModal(this.innerHTML.includes('账户') ? '账户' : '密码');
+    }
+    
+    // 尝试执行复制命令
+    let successful = false;
+    try {
+        successful = document.execCommand('copy');
+    } catch (err) {
+        console.error('复制失败:', err);
+    }
+    
+    // 移除临时元素
+    document.body.removeChild(textarea);
+    
+    if (successful) {
+        showCopyModal(button.innerHTML.includes('账户') ? '账户' : '密码');
+    } else {
+        alert('复制失败，请手动长按选择复制');
     }
 }
 
@@ -260,11 +317,31 @@ function showCopyModal(type) {
     // 添加到body
     document.body.appendChild(modal);
     
+    // 淡入效果已通过CSS实现
+    
+    // 关闭弹窗的通用函数
+    const closeModal = () => {
+        const modalContent = modal.querySelector('.modal-content');
+        modalContent.classList.add('modal-fade-out');
+        
+        // 等待动画完成后移除模态框
+        setTimeout(() => {
+            if (document.body.contains(modal)) {
+                document.body.removeChild(modal);
+            }
+        }, 300); // 动画持续时间为0.3秒
+    };
+    
     // 给确定按钮添加事件
     const closeBtn = modal.querySelector('.close-modal-btn');
-    closeBtn.addEventListener('click', function() {
-        document.body.removeChild(modal);
+    closeBtn.addEventListener('click', closeModal);
+    
+    // 点击模态框外部关闭
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
     });
     
-    // 移除自动关闭功能
+    // 自动关闭功能已移除
 } 
