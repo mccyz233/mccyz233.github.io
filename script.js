@@ -281,6 +281,13 @@ function renderAccounts(accounts) {
                 <button class="copy-btn" data-copy="account-${index + 1}" data-real="${account.account}">复制账户 <i class="fas fa-copy"></i></button>
                 <button class="copy-btn password-btn" data-real="${account.password}">复制密码 <i class="fas fa-key"></i></button>
             </div>
+            <div class="shop-link-card">
+                <a href="https://915172.xyz/" target="_blank" class="shop-link-btn">
+                    <i class="fas fa-crown"></i>
+                    <span>不用等待，立即获取独享账号</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
         `;
         
         accountsGrid.appendChild(accountCard);
